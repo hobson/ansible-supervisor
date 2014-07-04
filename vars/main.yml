@@ -21,3 +21,34 @@ supervisor:
     port: 127.0.0.1:9001
     username: user
     password: 123
+
+  programs:
+    - file: gunicorn.ini
+      name: gunicorn
+      values:
+        - command: "{{ virtualenv_path }}/bin/gunicorn_start"
+        - user: "{{ gunicorn_user }}"
+        - stdout_logfile: "{{ application_log_file }}"
+        - redirect_stderr: true
+
+# # need something like this for nginx, postgresql, and gunicorn but split out into each role and merged/appended into the supervisor conf?
+# supervisor:
+#   programs:
+#     - file: web.ini
+#       name: nginx
+#       values:
+#         - command: /usr/sbin/nginx
+#     - file: web.ini
+#       name: php-fpm
+#       values:
+#         - command: /usr/bin/php-fpm
+#         - autostart: "true"
+#     - file: db.ini
+#       name: redis
+#       values:
+#         - command: /usr/init.d/redis start
+#     - files: queue.ini
+#       name: queue-sync
+#       values:
+#         - directory: /var/www/app
+#         - command: /usr/bin/php artisan queue:listen --queue=sync --sleep=20
